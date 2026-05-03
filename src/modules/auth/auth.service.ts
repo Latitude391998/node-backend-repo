@@ -3,6 +3,7 @@ import { generateToken } from '../../utils/jwt';
 import { redisClient } from '../../config/redis';
 import { User } from './auth.model';
 import { logger } from '../../config/logger';
+import { generateAccessToken, generateRefreshToken } from '../../utils/token';
 
 type RegisterInput = {
   email: string;
@@ -72,6 +73,8 @@ export const loginUser = async (email: string, password: string) => {
       throw err;
     }
 
+    const accessToken = generateAccessToken({ id: user._id });
+    const refreshToken = generateRefreshToken({ id: user._id });
     /**
      * ✅ 2. Compare password
      */
@@ -98,6 +101,9 @@ export const loginUser = async (email: string, password: string) => {
      */
     await redisClient.set(`user:${user._id}`, JSON.stringify(safeUser), {
       EX: 3600,
+    });
+    await redisClient.set(`refresh:${user._id}`, refreshToken, {
+      EX: 7 * 24 * 3600,
     });
 
     /**

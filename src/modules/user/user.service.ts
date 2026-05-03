@@ -33,7 +33,7 @@ export const getProfile = async (userId: string) => {
     /**
      * 🔐 3. Sanitize
      */
-    delete (user as any).password;
+    const safeUser = { ...user, password: '' };
 
     /**
      * ✅ 4. Cache it
@@ -73,12 +73,12 @@ export const updateProfile = async (userId: string, data: Partial<{ email: strin
     /**
      * 🔐 Sanitize
      */
-    delete (user as any).password;
+    const safeUser = { ...user, password: '' };
 
     /**
      * ✅ Sync cache
      */
-    await redisClient.set(`user:${userId}`, JSON.stringify(user), {
+    await redisClient.set(`user:${userId}`, JSON.stringify(safeUser), {
       EX: 3600,
     });
 

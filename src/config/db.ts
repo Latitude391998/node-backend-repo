@@ -1,17 +1,21 @@
 import mongoose from 'mongoose';
+import { logger } from './logger';
 
 export const connectDB = async () => {
-  await mongoose.connect(process.env.MONGO_URI!);
-  console.log('MongoDB connected');
+  try {
+    await mongoose.connect(process.env.MONGO_URI as string);
+    logger.info('MongoDB connected');
+  } catch (err: any) {
+    logger.error(`MongoDB connection error: ${err.message}`);
+    process.exit(1);
+  }
 };
 
-// =========================
-// src/config/redis.ts
-// =========================
-import { createClient } from 'redis';
-
-export const redisClient = createClient({
-  url: process.env.REDIS_URL,
-});
-
-redisClient.connect();
+export const disconnectDB = async () => {
+  try {
+    await mongoose.connection.close();
+    logger.info('MongoDB disconnected');
+  } catch (err: any) {
+    logger.error(`Error disconnecting MongoDB: ${err.message}`);
+  }
+};

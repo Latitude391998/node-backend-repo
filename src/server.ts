@@ -1,18 +1,38 @@
 import app from './app';
-import { connectDB } from './config/db';
+import { connectDB, disconnectDB } from './config/db';
 import { config } from './config/env';
+import { logger } from './config/logger';
+import { connectRedis, disconnectRedis } from './config/redis';
+
+const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
-  try {
-    await connectDB();
+  await connectDB();
+  await connectRedis();
 
-    app.listen(config.port, () => {
-      console.log(`Server running in ${config.env} on port ${config.port}`);
+  const server = app.listen(PORT, () => {
+    logger.info(`Server running in ${config.env} on port ${config.port}`);
+  });
+
+  const gracefulShutdown = async (signal: string) => {
+    logger.warn(`Received ${signal}. Starting graceful shutdown...`);
+
+    server.close(async (err?: Error) => {
+      if (err) {
+        logger.error(`Error shutting down server: ${err.message}`);
+        process.exit(1);
+      }
+
+      await disconnectDB();
+      await disconnectRedis();
+
+      logger.info('Cleanup complete. Exiting process.');
+      process.exit(0);
     });
-  } catch (err) {
-    console.error('Startup failed', err);
-    process.exit(1);
-  }
+  };
+
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 };
 
 startServer();
