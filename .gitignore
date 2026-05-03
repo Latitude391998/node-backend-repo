@@ -31,3 +31,131 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+# =========================
+
+# NODE MODULES
+
+# =========================
+
+node_modules/
+
+# =========================
+
+# BUILD OUTPUT
+
+# =========================
+
+dist/
+build/
+coverage/
+
+# =========================
+
+# LOGS
+
+# =========================
+
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+
+# ENV FILES (VERY IMPORTANT)
+
+# =========================
+
+.env*
+!.env.example
+
+# =========================
+
+# TYPESCRIPT
+
+# =========================
+
+*.tsbuildinfo
+
+# =========================
+
+# OS FILES
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# IDE / EDITOR
+
+# =========================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+
+# TESTING
+
+# =========================
+
+coverage/
+.nyc_output/
+
+# =========================
+
+# CACHE / TEMP FILES
+
+# =========================
+
+.cache/
+.tmp/
+temp/
+
+# =========================
+
+# DOCKER (optional)
+
+# =========================
+
+docker-compose.override.yml
+
+# =========================
+
+# MONGODB (if local dumps used)
+
+# =========================
+
+dump/
+
+# =========================
+
+# REDIS (if local persistence used)
+
+# =========================
+
+appendonly.aof
+dump.rdb
+
+# =========================
+
+# HUSKY (keep config, ignore temp)
+
+# =========================
+
+.husky/_/
+
+# =========================
+
+# MISC
+
+# =========================
+
+*.tgz
+*.zip

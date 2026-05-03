@@ -1,0 +1,21 @@
+import express from 'express';
+import cors from 'cors';
+import authRoutes from './modules/auth/auth.routes';
+import userRoutes from './modules/user/user.routes';
+import { errorHandler } from './middlewares/error.middleware';
+import { requestLogger } from './middlewares/requestLogger';
+
+// 👇 ADD THIS HERE (TOP LEVEL)
+const app = express();
+app.use(requestLogger);
+
+app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+
+app.use('/api/user', userRoutes);
+
+app.use(errorHandler);
+
+export default app;

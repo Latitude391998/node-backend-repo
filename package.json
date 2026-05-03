@@ -1,0 +1,72 @@
+{
+  "name": "backend_server",
+  "version": "1.0.0",
+  "description": "Backend server for my personal prohject with different libraries. It will server as a training and practice project also as my profile where I put all my details.",
+  "keywords": [
+    "Backend_Server"
+  ],
+  "homepage": "https://github.com/Latitude391998/node-backend-repo#readme",
+  "bugs": {
+    "url": "https://github.com/Latitude391998/node-backend-repo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Latitude391998/node-backend-repo.git"
+  },
+  "license": "ISC",
+  "author": "Akshansh Saini",
+  "type": "commonjs",
+  "main": "src/sever.ts",
+  "dependencies": {
+    "bcryptjs": "^2",
+    "cors": "^2",
+    "dotenv": "^16",
+    "express": "^4",
+    "express-rate-limit": "^8.4.1",
+    "helmet": "^8.1.0",
+    "joi": "^17",
+    "jsonwebtoken": "^9",
+    "lodash": "^4",
+    "moment": "^2",
+    "mongoose": "^8",
+    "morgan": "^1.10.1",
+    "redis": "^4",
+    "winston": "^3.19.0",
+    "winston-daily-rotate-file": "^5.0.0",
+    "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-serve-static-core": "^5.1.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/lodash": "^4.17.24",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^25.6.0",
+    "eslint": "^10.3.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15",
+    "prettier": "^3",
+    "ts-node-dev": "^2",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development ts-node-dev --respawn src/server.ts",
+    "build": "tsc",
+    "start": "NODE_ENV=production node dist/server.js",
+    "prepare": "husky install",
+    "test": "echo \"Error: no test specified yet\" && exit 0"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "overrides": {
+    "rimraf": "^4.4.1",
+    "glob": "^10.3.10"
+  }
+}
