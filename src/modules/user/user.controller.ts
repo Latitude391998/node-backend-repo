@@ -17,6 +17,10 @@ export const profile = async (req: AuthRequest, res: Response, next: NextFunctio
       data: user,
     });
   } catch (err) {
+    logger.error('Profile fetch failed', {
+      userId: req.user.id,
+      error: (err as any).message,
+    });
     next(err);
   }
 };
@@ -46,6 +50,10 @@ export const update = async (req: AuthRequest, res: Response, next: NextFunction
       data: user,
     });
   } catch (err) {
+    logger.error('Profile fetch failed', {
+      userId: req.user.id,
+      error: (err as any).message,
+    });
     next(err);
   }
 };
@@ -60,6 +68,10 @@ export const remove = async (req: AuthRequest, res: Response, next: NextFunction
 
     res.status(200).json(result);
   } catch (err) {
+    logger.error('Profile fetch failed', {
+      userId: req.user.id,
+      error: (err as any).message,
+    });
     next(err);
   }
 };

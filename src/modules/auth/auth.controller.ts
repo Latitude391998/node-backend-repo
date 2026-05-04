@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { registerUser, loginUser } from './auth.service';
 import { registerSchema } from '../../utils/validator';
 import { logger } from '../../config/logger';
+import { refreshAccessToken } from './auth.service';
 
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -100,5 +101,26 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     }
 
     next(err);
+  }
+};
+
+export const refresh = async (req: Request, res: Response) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(400).json({ message: 'Refresh token required' });
+    }
+
+    const tokens = await refreshAccessToken(refreshToken);
+
+    return res.status(200).json({
+      message: 'Token refreshed',
+      data: tokens,
+    });
+  } catch {
+    return res.status(401).json({
+      message: 'Invalid or expired refresh token',
+    });
   }
 };

@@ -38,11 +38,11 @@ export const getProfile = async (userId: string) => {
     /**
      * ✅ 4. Cache it
      */
-    await redisClient.set(cacheKey, JSON.stringify(user), {
+    await redisClient.set(cacheKey, JSON.stringify(safeUser), {
       EX: 3600,
     });
 
-    return user;
+    return safeUser;
   } catch (err) {
     logger.error('Get profile failed', {
       userId,
@@ -87,7 +87,7 @@ export const updateProfile = async (userId: string, data: Partial<{ email: strin
       updatedFields: Object.keys(data),
     });
 
-    return user;
+    return safeUser;
   } catch (err) {
     logger.error('Update profile failed', {
       userId,
@@ -108,12 +108,30 @@ export const deleteProfile = async (userId: string) => {
     }
 
     /**
-     * ✅ Remove cache
+     * ✅ Remove user cache
      */
     await redisClient.del(`user:${userId}`);
 
-    logger.info('User deleted', {
+    /**
+     * 🔥 Remove ALL refresh tokens (multi-device logout)
+     */
+    const iterator = redisClient.scanIterator({
+      MATCH: `refresh:${userId}:*`,
+    });
+
+    const keys: string[] = [];
+
+    for await (const key of iterator) {
+      keys.push(key);
+    }
+
+    if (keys.length) {
+      await redisClient.del(keys);
+    }
+
+    logger.info('User deleted with session cleanup', {
       userId,
+      removedSessions: keys.length,
     });
 
     return { message: 'User deleted successfully' };

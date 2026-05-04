@@ -19,6 +19,10 @@ const envSchema = Joi.object({
 
   JWT_SECRET: Joi.string().min(10).required(),
 
+  ACCESS_TOKEN_SECRET: Joi.string().required(),
+  REFRESH_TOKEN_SECRET: Joi.string().required(),
+  HEALTH_TOKEN: Joi.string().required(),
+
   CLIENT_URL: Joi.string().required(),
 }).unknown();
 
