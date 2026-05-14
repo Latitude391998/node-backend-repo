@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { registerUser, loginUser } from './auth.service';
+import { registerUser, loginUser, logoutAllDevices } from './auth.service';
 import { registerSchema } from '../../utils/validator';
 import { logger } from '../../config/logger';
 import { refreshAccessToken } from './auth.service';
@@ -85,10 +85,17 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       userId: data.user?._id,
       ip: req.ip,
     });
-
+    const refreshToken = data.refreshToken;
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: false, // ⚠️ true in production (HTTPS)
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     return res.status(200).json({
       message: 'Login successful',
-      data,
+      user: data.user,
+      accessToken: data.accessToken,
     });
   } catch (err: any) {
     /**
@@ -106,21 +113,63 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 export const refresh = async (req: Request, res: Response) => {
   try {
-    const { refreshToken } = req.body;
+    // const { refreshToken } = req.body;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
       return res.status(400).json({ message: 'Refresh token required' });
     }
 
     const tokens = await refreshAccessToken(refreshToken);
-
+    const responseRefreshToken = tokens.refreshToken;
+    res.cookie('refreshToken', responseRefreshToken, {
+      httpOnly: true,
+      secure: false, // ⚠️ true in production (HTTPS)
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     return res.status(200).json({
       message: 'Token refreshed',
-      data: tokens,
+      accessToken: tokens.accessToken,
     });
   } catch {
     return res.status(401).json({
       message: 'Invalid or expired refresh token',
     });
+  }
+};
+
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        message: 'User Id required to logout',
+      });
+    }
+
+    const data = await logoutAllDevices(userId);
+
+    /**
+     * ✅ Logout logging
+     */
+    logger.info('User logout', {
+      userId: userId,
+      ip: req.ip,
+    });
+
+    return res.status(200).json({
+      message: 'Logout successful.',
+    });
+  } catch (err: any) {
+    /**
+     * ❗ Known auth errors
+     */
+    return res.status(401).json({
+      message: 'Invalid user Id',
+    });
+
+    next(err);
   }
 };

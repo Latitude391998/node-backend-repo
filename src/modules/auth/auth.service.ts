@@ -5,6 +5,7 @@ import { redisClient } from '../../config/redis';
 import { User } from './auth.model';
 import { logger } from '../../config/logger';
 import { generateAccessToken, generateRefreshToken, generateRefreshTokenWithId } from '../../utils/token';
+import { IUser } from '../../models/user.model';
 
 type RegisterInput = {
   email: string;
@@ -16,7 +17,7 @@ export const refreshTokenSchema = Joi.object({
   refreshToken: Joi.string().required(),
 });
 
-export const registerUser = async (data: RegisterInput) => {
+export const registerUser = async (data: RegisterInput): Promise<IUser> => {
   try {
     /**
      * ✅ 1. Hash password
