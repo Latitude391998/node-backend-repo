@@ -7,9 +7,13 @@ import { requestLogger } from './middlewares/requestLogger';
 import { corsOptions } from './config/cors';
 import healthRoutes from './routes/health.routes';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import mongoSanitize from 'express-mongo-sanitize';
 
 // 👇 ADD THIS HERE (TOP LEVEL)
 const app = express();
+app.use(helmet());
+app.use(mongoSanitize());
 app.use(requestLogger);
 
 app.use(cookieParser());

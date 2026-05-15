@@ -22,18 +22,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# Only install production deps
-COPY package*.json ./
-RUN npm install --only=production
+ENV NODE_ENV=production
 
-# Copy built files from builder
+COPY package*.json ./
+
+RUN npm install --omit=dev
+
 COPY --from=builder /app/dist ./dist
 
-# Copy env if needed (optional)
-# COPY .env .env
+EXPOSE 5000
 
-# Expose port
-EXPOSE 3000
-
-# Start app
 CMD ["node", "dist/server.js"]
