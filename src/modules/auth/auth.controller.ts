@@ -3,7 +3,7 @@ import { registerUser, loginUser, logoutAllDevices } from './auth.service';
 import { registerSchema } from '../../utils/validator';
 import { logger } from '../../config/logger';
 import { refreshAccessToken } from './auth.service';
-
+const ENV = process.env.NODE_ENV;
 export const register = async (req: Request, res: Response, next: NextFunction) => {
   try {
     /**
@@ -88,8 +88,8 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
     const refreshToken = data.refreshToken;
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false, // ⚠️ true in production (HTTPS)
-      sameSite: 'lax',
+      secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
+      sameSite: ENV === 'production' ? 'strict' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     return res.status(200).json({
@@ -124,8 +124,8 @@ export const refresh = async (req: Request, res: Response) => {
     const responseRefreshToken = tokens.refreshToken;
     res.cookie('refreshToken', responseRefreshToken, {
       httpOnly: true,
-      secure: false, // ⚠️ true in production (HTTPS)
-      sameSite: 'lax',
+      secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
+      sameSite: ENV === 'production' ? 'strict' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
     return res.status(200).json({
