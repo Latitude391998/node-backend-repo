@@ -2,15 +2,23 @@ import dotenv from 'dotenv';
 import Joi from 'joi';
 
 // Load correct env file
-const ENV = process.env.NODE_ENV || 'development';
+const ENV = process.env.NODE_ENV || 'local';
 
-// Load priority order
-dotenv.config(); // .env
-dotenv.config({ path: `.env.${ENV}` }); // env specific
-dotenv.config({ path: `.env.local` }); // local override
+// Load env-specific file first
+dotenv.config({
+  path: `.env.${ENV}`,
+});
+
+// Only load local overrides outside docker/prod
+if (ENV === 'local') {
+  dotenv.config({
+    path: `.env.local`,
+  });
+}
+
 // Validation schema
 const envSchema = Joi.object({
-  NODE_ENV: Joi.string().valid('development', 'production', 'test').required(),
+  NODE_ENV: Joi.string().valid('local', 'development', 'production', 'test').required(),
 
   PORT: Joi.number().default(5000),
 
