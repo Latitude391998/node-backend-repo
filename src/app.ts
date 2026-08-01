@@ -9,6 +9,7 @@ import healthRoutes from './routes/health.routes';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
+import receiptRoutes from './modules/receipt/receipt.routes';
 
 // 👇 ADD THIS HERE (TOP LEVEL)
 const app = express();
@@ -27,6 +28,8 @@ app.use('/health', healthRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use('/api/user', userRoutes);
+
+app.use('/api/receipts', receiptRoutes);
 
 app.use(errorHandler);
 

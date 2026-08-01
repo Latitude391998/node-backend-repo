@@ -1,6 +1,7 @@
 import express from 'express';
 import { checkHealth } from '../utils/healthChecker';
 import { logger } from '../config/logger';
+import { config } from '../config/env';
 
 const router = express.Router();
 
@@ -27,12 +28,15 @@ router.get('/ready', async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    if (req.headers['x-health-token'] !== process.env.HEALTH_TOKEN) {
+    if (req.headers['x-health-token'] !== config.healthToken) {
       logger.warn('Unauthorized health check attempt', {
         ip: req.ip,
       });
 
-      return res.status(403).json({ message: 'Forbidden' });
+      return res.status(403).json({
+        status: 'FORBIDDEN',
+        message: 'Missing or invalid x-health-token header',
+      });
     }
 
     const health = await checkHealth();

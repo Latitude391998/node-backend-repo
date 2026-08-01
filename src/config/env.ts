@@ -48,7 +48,7 @@ export const config = {
 
   mongoUri: envVars.MONGO_URI,
   redisUrl: envVars.REDIS_URL,
-
+  healthToken: envVars.HEALTH_TOKEN,
   jwtSecret: envVars.JWT_SECRET,
 
   clientUrl: envVars.CLIENT_URL,

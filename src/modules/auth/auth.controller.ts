@@ -86,12 +86,21 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
       ip: req.ip,
     });
     const refreshToken = data.refreshToken;
-    res.cookie('refreshToken', refreshToken, {
+    // res.cookie('refreshToken', refreshToken, {
+    //   httpOnly: true,
+    //   secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
+    //   sameSite: ENV === 'production' ? 'strict' : 'lax',
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+    // FIX: Apply cross-domain friendly cookie settings if domains differ
+    const cookieOptions = {
       httpOnly: true,
-      secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
-      sameSite: ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+      secure: true, // MUST be true for SameSite='none'
+      sameSite: (ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax' | 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    res.cookie('refreshToken', refreshToken, cookieOptions);
     return res.status(200).json({
       message: 'Login successful',
       user: data.user,
@@ -122,12 +131,20 @@ export const refresh = async (req: Request, res: Response) => {
 
     const tokens = await refreshAccessToken(refreshToken);
     const responseRefreshToken = tokens.refreshToken;
-    res.cookie('refreshToken', responseRefreshToken, {
+    // res.cookie('refreshToken', responseRefreshToken, {
+    //   httpOnly: true,
+    //   secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
+    //   sameSite: ENV === 'production' ? 'strict' : 'lax',
+    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    // });
+    const cookieOptions = {
       httpOnly: true,
-      secure: ENV === 'production' ? true : false, // ⚠️ true in production (HTTPS)
-      sameSite: ENV === 'production' ? 'strict' : 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+      secure: true, // MUST be true for SameSite='none'
+      sameSite: (ENV === 'production' ? 'none' : 'lax') as 'none' | 'lax' | 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    };
+
+    res.cookie('refreshToken', refreshToken, cookieOptions);
     return res.status(200).json({
       message: 'Token refreshed',
       accessToken: tokens.accessToken,
