@@ -10,6 +10,8 @@ import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import mongoSanitize from 'express-mongo-sanitize';
 import receiptRoutes from './modules/receipt/receipt.routes';
+import productRoutes from './modules/product/product.routes';
+import warrantyRoutes from './modules/warranty/warranty.routes';
 
 // 👇 ADD THIS HERE (TOP LEVEL)
 const app = express();
@@ -30,6 +32,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 
 app.use('/api/receipts', receiptRoutes);
+
+app.use('/api/products', productRoutes);
+
+app.use('/api/warranty', warrantyRoutes);
 
 app.use(errorHandler);
 
