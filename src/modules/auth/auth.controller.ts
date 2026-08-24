@@ -84,6 +84,7 @@ export const refresh = async (req: Request, res: Response, next: NextFunction) =
 export const logout = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { userId } = req.body;
+    // const { userId } = req.body;
 
     if (!userId) return res.status(400).json({ message: 'User Id required to logout' });
 
